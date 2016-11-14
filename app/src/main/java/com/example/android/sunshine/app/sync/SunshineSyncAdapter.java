@@ -37,6 +37,14 @@ import com.example.android.sunshine.app.Utility;
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.muzei.WeatherMuzeiSource;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,9 +95,17 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int LOCATION_STATUS_UNKNOWN = 3;
     public static final int LOCATION_STATUS_INVALID = 4;
 
+    private GoogleApiClient mGoogleApiClient;
+
     public SunshineSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addApi(Wearable.API)
+                    .build();
+        }
     }
+
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
@@ -329,6 +345,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 weatherValues.put(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC, description);
                 weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID, weatherId);
 
+                // Assuming day 0 is today's date.
+                if (i == 0) {
+                    updateWatchFace(weatherId, high, low);
+                }
                 cVVector.add(weatherValues);
             }
 
@@ -356,6 +376,24 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             e.printStackTrace();
             setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
         }
+    }
+    private void updateWatchFace(int weatherId, double high, double low) {
+
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/weather-info");
+
+        putDataMapReq.getDataMap().putInt("weatherId", weatherId);
+        putDataMapReq.getDataMap().putDouble("high", high);
+        putDataMapReq.getDataMap().putDouble("low", low);
+
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+
+        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+        pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+            @Override
+            public void onResult(DataApi.DataItemResult dataItemResult) {
+                Log.d(LOG_TAG, "Sending : " + dataItemResult.getStatus().isSuccess());
+            }
+        });
     }
 
     private void updateWidgets() {
