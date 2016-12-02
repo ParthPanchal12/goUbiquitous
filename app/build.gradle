@@ -6,7 +6,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.example.android.sunshine.app"
+        applicationId "com.example.android.sunshine"
         minSdkVersion 10
         targetSdkVersion 21
         versionCode 1
@@ -19,7 +19,7 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', '"KEY"'
+        it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', '"e87d2d2499a9ce4864344c56c9cff418"'
     }
 }
 
@@ -33,8 +33,8 @@ dependencies {
     compile 'com.android.support:design:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
     compile 'com.google.android.apps.muzei:muzei-api:2.0'
-    compile 'com.google.android.gms:play-services-gcm:7.5.0'
-    compile 'com.google.android.gms:play-services-wearable:8.4.0'
+    compile 'com.google.android.gms:play-services-gcm:8.4.0'
+    compile 'com.google.android.gms:play-services-wearable:8.3.0'
 
     wearApp project(':sunshineWear')
 }

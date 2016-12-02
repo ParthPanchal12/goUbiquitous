@@ -30,13 +30,14 @@ import android.text.format.Time;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
-import com.example.android.sunshine.app.BuildConfig;
+import com.example.android.sunshine.BuildConfig;
 import com.example.android.sunshine.app.MainActivity;
-import com.example.android.sunshine.app.R;
+import com.example.android.sunshine.R;
 import com.example.android.sunshine.app.Utility;
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.muzei.WeatherMuzeiSource;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -59,6 +60,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
@@ -379,15 +381,25 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     }
     private void updateWatchFace(int weatherId, double high, double low) {
 
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/weather-info");
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/weather-info").setUrgent();
 
         putDataMapReq.getDataMap().putInt("weatherId", weatherId);
-        putDataMapReq.getDataMap().putDouble("high", high);
-        putDataMapReq.getDataMap().putDouble("low", low);
+        putDataMapReq.getDataMap().putString("high", ""+high);
+        putDataMapReq.getDataMap().putString("low", ""+low);
 
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
 
-        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+        Context c=getContext();
+        // Connect Google API client
+        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(c)
+                .addApi(Wearable.API)
+                .build();
+        // Get result of Google API Client Connection
+        ConnectionResult connectionResult = googleApiClient.blockingConnect(30, TimeUnit.SECONDS);
+        if (!connectionResult.isSuccess()) {
+            return;
+        }
+        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
         pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
             @Override
             public void onResult(DataApi.DataItemResult dataItemResult) {

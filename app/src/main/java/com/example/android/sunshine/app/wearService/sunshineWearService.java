@@ -15,7 +15,7 @@ public class sunshineWearService extends WearableListenerService {
 
     private static final String TAG = sunshineWearService.class.getSimpleName();
 
-    private static final String WEATHER_PATH = "/weather";
+    private static final String WEATHER_PATH = "/weather-info";
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {

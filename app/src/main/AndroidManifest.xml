@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.sunshine.app">
+    package="com.example.android.sunshine">
 
     <!-- This permission is necessary in order for Sunshine to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -44,7 +44,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".app.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Main">
             <intent-filter>
@@ -54,18 +54,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivity"
+            android:name=".app.DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".app.MainActivity"
             android:theme="@style/AppTheme.Details">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.sunshine.app.MainActivity" />
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".app.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".app.MainActivity"
             android:theme="@style/SettingsTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -73,13 +73,13 @@
         </activity>
 
         <provider
-            android:name=".data.WeatherProvider"
+            android:name=".app.data.WeatherProvider"
             android:authorities="@string/content_authority"
             android:exported="false"
             android:syncable="true" />
 
         <!-- SyncAdapter's dummy authentication service -->
-        <service android:name=".sync.SunshineAuthenticatorService">
+        <service android:name=".app.sync.SunshineAuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -91,7 +91,7 @@
 
         <!-- The SyncAdapter service -->
         <service
-            android:name=".sync.SunshineSyncService"
+            android:name=".app.sync.SunshineSyncService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
@@ -116,7 +116,7 @@
         </receiver>
         <!-- Muzei Extension -->
         <service
-            android:name=".muzei.WeatherMuzeiSource"
+            android:name=".app.muzei.WeatherMuzeiSource"
             android:description="@string/muzei_description"
             android:icon="@drawable/ic_muzei"
             android:label="@string/app_name">
@@ -130,7 +130,7 @@
         </service>
         <!-- Today Widget -->
         <receiver
-            android:name=".widget.TodayWidgetProvider"
+            android:name=".app.widget.TodayWidgetProvider"
             android:label="@string/title_widget_today">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -142,10 +142,10 @@
                 android:resource="@xml/widget_info_today" />
         </receiver>
 
-        <service android:name=".widget.TodayWidgetIntentService" />
+        <service android:name=".app.widget.TodayWidgetIntentService" />
         <!-- Detail Widget -->
         <receiver
-            android:name=".widget.DetailWidgetProvider"
+            android:name=".app.widget.DetailWidgetProvider"
             android:enabled="@bool/widget_detail_enabled"
             android:label="@string/title_widget_detail">
             <intent-filter>
@@ -159,32 +159,32 @@
         </receiver>
 
         <service
-            android:name=".widget.DetailWidgetRemoteViewsService"
+            android:name=".app.widget.DetailWidgetRemoteViewsService"
             android:enabled="@bool/widget_detail_enabled"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
-            android:name=".wearService.sunshineWearService">
+            android:name=".app.wearService.sunshineWearService">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
         </service>
         <service
-            android:name="gcm.MyGcmListenerService"
+            android:name="app.gcm.MyGcmListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <service
-            android:name="gcm.MyInstanceIDListenerService"
+            android:name="app.gcm.MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <service
-            android:name=".gcm.RegistrationIntentService"
+            android:name=".app.gcm.RegistrationIntentService"
             android:exported="false"></service>
     </application>
 

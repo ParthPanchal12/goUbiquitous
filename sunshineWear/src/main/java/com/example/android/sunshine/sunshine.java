@@ -116,7 +116,7 @@ public class sunshine extends CanvasWatchFaceService {
     private class Engine extends CanvasWatchFaceService.Engine {
         final Handler mUpdateTimeHandler = new EngineHandler(this);
 
-        private static final String WEATHER_PATH = "/weather";
+        private static final String WEATHER_PATH = "/weather-info";
         private static final String WEATHER_TEMP_HIGH_KEY = "high";
         private static final String WEATHER_TEMP_LOW_KEY = "low";
         private static final String WEATHER_ID = "weatherId";
@@ -385,10 +385,12 @@ public class sunshine extends CanvasWatchFaceService {
 
             textSize = resources.getDimension(isRound
                     ? R.dimen.digital_date_size_round : R.dimen.digital_date_size);
+            float temperatureSize = resources.getDimension(isRound
+                    ? R.dimen.digital_text_size_round : R.dimen.digital_text_size);
 
             mDatePaint.setTextSize(textSize);
-            mMaxPaint.setTextSize(textSize);
-            mMinPaint.setTextSize(textSize);
+            mMaxPaint.setTextSize(temperatureSize);
+            mMinPaint.setTextSize(temperatureSize);
 
             format = new SimpleDateFormat("EEE, MMM dd", Locale.US);
         }
@@ -477,27 +479,26 @@ public class sunshine extends CanvasWatchFaceService {
                 if(weatherTempHigh != null && weatherTempLow != null){
                     float height = (bounds.height()/2.0f) + mXOffset + mMaxPaint.getTextSize() + 10;
 
-                    canvas.drawText(weatherTempHigh, bounds.width() * 0.40f, height, mMaxPaint);
-                    canvas.drawText(weatherTempLow, bounds.width() * 0.61f, height, mMinPaint);
+                    canvas.drawText(weatherTempHigh, bounds.width() * 0.45f, height, mMaxPaint);
+                    canvas.drawText(weatherTempLow, bounds.width() * 0.71f, height, mMinPaint);
                 }
                 else{
                     weatherTempHigh="-";
                     weatherTempLow="-";
                     float height = (bounds.height()/2.0f) + mXOffset + mMaxPaint.getTextSize() + 10;
 
-                    canvas.drawText(weatherTempHigh, bounds.width() * 0.40f, height, mMaxPaint);
-                    canvas.drawText(weatherTempLow, bounds.width() * 0.61f, height, mMinPaint);
+                    canvas.drawText(weatherTempHigh, bounds.width() * 0.45f, height, mMaxPaint);
+                    canvas.drawText(weatherTempLow, bounds.width() * 0.71f, height, mMinPaint);
                 }
 
                 if(weatherTempIcon != null){
                     Paint paint = new Paint();
-                    canvas.drawBitmap(weatherTempIcon, bounds.width() / 5, (bounds.height() / 2.0f) + mXOffset, paint);
+                    canvas.drawBitmap(weatherTempIcon, bounds.width() / 10, (bounds.height() / 2.0f) + mXOffset, paint);
                 }
                 else{
                     Paint paint = new Paint();
                     Bitmap b=BitmapFactory.decodeResource(getResources(),R.mipmap.sample);
-                    canvas.drawBitmap(b, bounds.width() / 5, (bounds.height() / 2.0f) + mXOffset, paint);
-                    Toast.makeText(getApplicationContext(),"No Connection",Toast.LENGTH_LONG).show();
+                    canvas.drawBitmap(b, bounds.width() / 10, (bounds.height() / 2.0f) + mXOffset, paint);
                 }
 
 
